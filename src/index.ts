@@ -1,5 +1,5 @@
-function main(){
-    console.log('Yeeeeah Hot reload!')
-}
+import app from './app'
 
-main()
+
+app.start()
+app.initWhatsapp()
