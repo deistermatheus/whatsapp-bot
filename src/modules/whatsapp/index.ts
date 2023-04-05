@@ -1,36 +1,15 @@
-import makeWASocket, { DisconnectReason, useMultiFileAuthState, downloadMediaMessage, makeInMemoryStore  }  from '@adiwajshing/baileys'
-import type { WASocket } from '@adiwajshing/baileys'
+import makeWASocket, { DisconnectReason, useMultiFileAuthState, downloadContentFromMessage, makeInMemoryStore, WAMessage, WAGenericMediaMessage  }  from '@adiwajshing/baileys'
+import type { WASocket, MediaType, DownloadableMessage, Message } from '@adiwajshing/baileys'
+
+import MediaHandler from './handlers/media-handler'
 
 import { Boom } from '@hapi/boom'
 import Pino from 'pino'
-import { Stream } from 'stream'
 const logger = Pino({level: 'debug'})
 
 
-const RECEIVER_ID = '553197344694@s.whatsapp.net'
-
 const globalState: {socket?: WASocket} = {} 
 
-async function getMediaStream(messageNotification){
-    //const stream = await downloadMediaMessage(messageNotification, 'stream', {}, {logger, reuploadRequest: (globalState.socket as WASocket).updateMediaMessage}) as Stream
-    //stream.pipe(process.stdout)
-}
-
-function parseCommand(messageNotification: any){ 
-    const { message } = messageNotification  
-    if(message?.extendedTextMessage?.contextInfo?.quotedMessage){
-        const { extendedTextMessage: { contextInfo } } = message
-
-
-        const { quotedMessage, mentionedJid = []} = contextInfo
-
-        if(mentionedJid.includes(RECEIVER_ID)){
-            if(quotedMessage.audioMessage){
-                return getMediaStream(quotedMessage.audioMessage)
-            }
-        }
-    } 
-}
 
 async function connectToWhatsApp () {
     const { state, saveCreds } = await useMultiFileAuthState('auth_info_baileys')
@@ -70,14 +49,15 @@ async function connectToWhatsApp () {
     sock.ev.on('messages.upsert', async ({messages: messageList}) => {
         console.log(JSON.stringify(messageList, null, 4))
 
-        for(const messageNotification of messageList){
+        for (const messageNotification of messageList) {
+            
             if(messageNotification.key.fromMe) {
                 continue
             }
 
             if(messageNotification.key.remoteJid){
                 console.log('replying to', messageNotification.key.remoteJid)
-                parseCommand(messageNotification)
+                await parseCommand(messageNotification)
                 await sock.sendMessage(messageNotification.key.remoteJid, { text: 'Hello World!'})
             }
 
