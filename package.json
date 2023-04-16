@@ -27,7 +27,10 @@
   "dependencies": {
     "@adiwajshing/baileys": "^5.0.0",
     "@adiwajshing/keyed-db": "^0.2.4",
+    "axios": "^1.3.5",
+    "dotenv": "^16.0.3",
     "fluent-ffmpeg": "^2.1.2",
+    "openai": "^3.2.1",
     "pino": "^8.11.0",
     "qrcode-terminal": "^0.12.0"
   }

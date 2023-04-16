@@ -1,6 +1,9 @@
 node_modules
 auth_info_baileys
-baileys_store.json
 ref
 
 build
+ts.ts
+baileys_store.json
+test.json
+.env

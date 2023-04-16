@@ -13,8 +13,7 @@ export default class FFMpeg {
         })
         .on('end', () => {
             console.log('Processing finished !');
-        })
-        .save('./hello.mp3')
+        }).pipe()
     }
 }
 
