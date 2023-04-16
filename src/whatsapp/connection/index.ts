@@ -116,7 +116,6 @@ async function transcribeAudioAndReply(message: proto.IWebMessageInfo, receiver:
     if(quotedMessage?.audioMessage){
         const stream = await getMediaStream(quotedMessage.audioMessage, 'audio')
         const convertedAudioStream = await getWhatsappAudioStreamAsFormat(stream, 'mp3')
-        //const convertedAudioStream = fs.createReadStream(path.resolve(getRoot(), 'test.mp3'))
         const assignProp = (target: any, path: string, value: any) => {
             target[path] = value
         }

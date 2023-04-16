@@ -1,3 +1,5 @@
 import Pino from 'pino'
 
-export default Pino({ timestamp: () => `,"time":"${new Date().toJSON()}"`, level: 'info' })
+const logLevel = process.env.PINO_LOG_LEVEL ?? 'info'
+
+export default Pino({ timestamp: () => `,"time":"${new Date().toJSON()}"`, level: logLevel })
