@@ -1,6 +1,6 @@
 {
   "name": "wpp-bot",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "",
   "main": "src/index.js",
   "scripts": {
@@ -27,7 +27,6 @@
   "dependencies": {
     "@adiwajshing/baileys": "^5.0.0",
     "@adiwajshing/keyed-db": "^0.2.4",
-    "@deepgram/sdk": "^1.19.0",
     "fluent-ffmpeg": "^2.1.2",
     "pino": "^8.11.0",
     "qrcode-terminal": "^0.12.0"

@@ -1,1 +1,0 @@
-export const RECEIVER_ID = '553197344694@s.whatsapp.net'
