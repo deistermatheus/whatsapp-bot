@@ -81,7 +81,7 @@ async function processUserMessage(message: proto.IWebMessageInfo, socket: WASock
         if(extendedTextMessage){
             console.log('função pra mensagem rica')
             await processExtendedTextMessage(message, socket)
-        }
+        }   
     } 
 }
 
@@ -116,6 +116,8 @@ async function transcribeAudioAndReply(message: proto.IWebMessageInfo, receiver:
     if(quotedMessage?.audioMessage){
         const stream = await getMediaStream(quotedMessage.audioMessage, 'audio')
         const convertedAudioStream = await getWhatsappAudioStreamAsFormat(stream, 'mp3')
+
+        // workaround bug in OpenAI node.js SDK, it expects the read stream to have a path to validate it on their side
         const assignProp = (target: any, path: string, value: any) => {
             target[path] = value
         }
@@ -123,13 +125,12 @@ async function transcribeAudioAndReply(message: proto.IWebMessageInfo, receiver:
        assignProp(convertedAudioStream, 'path', 'test.mp3')
         
         try {
-        
-           
             const { data } = await OpenAIApi.createTranscription(convertedAudioStream, 'whisper-1')
 
             if(data.text){
                 await sendText({text: data.text}, message.key.remoteJid || '', socket)
             }
+
         } catch(error){
            console.error(error)
         }
