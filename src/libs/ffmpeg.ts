@@ -6,15 +6,15 @@ export default class FFMpeg {
         return ffmpeg().input(mediaStream).toFormat(format)
         .on('error', (err) => {
             console.log('An error occurred: ' + err.message);
+            throw err;
         })
         .on('progress', (progress) => {
             // console.log(JSON.stringify(progress));
-            console.log('Processing: ' + progress.targetSize + ' KB converted');
+            //console.log('Processing: ' + progress.targetSize + ' KB converted');
         })
         .on('end', () => {
-            console.log('Processing finished !');
-        })
-        .save('./hello.mp3')
+            //console.log('Processing finished !');
+        }).pipe()
     }
 }
 
