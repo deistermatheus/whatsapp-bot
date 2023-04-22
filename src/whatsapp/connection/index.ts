@@ -13,20 +13,20 @@ import { Boom } from '@hapi/boom'
 import FFMpeg from '../../libs/ffmpeg'
 import logger from '../../libs/logger'
 import { delay } from '../../libs/async'
-import getRoot from '../../libs/root-path'
 
 import OpenAIApi from '../../openai/api'
-
-import memoryStore from '../components/in-memory-store'
 import useMultiFileAuthState from '../components/multi-file-auth-state'
+import useRedisMultiFileAuthState from '../components/redis-multi-file-auth-state'
+import memoryStore from '../components/in-memory-store'
 
 async function connectToWhatsApp () {
     const { state, saveCreds } = await useMultiFileAuthState()
+    const { state: redisState, saveCreds: saveRedisCreds } = await useRedisMultiFileAuthState()
 
  
     const socket = makeWASocket({
         printQRInTerminal: true,
-        auth: state,
+        auth: redisState, //state,
         logger,
         shouldSyncHistoryMessage: () => false
     })
@@ -34,7 +34,10 @@ async function connectToWhatsApp () {
     const { ev: WAEvents } = socket
 
     memoryStore.bind(socket.ev)
-    WAEvents.on ('creds.update', saveCreds)
+    
+    //WAEvents.on ('creds.update', saveCreds)
+    WAEvents.on('creds.update', saveRedisCreds)
+
     WAEvents.on('connection.update', (update) => {
         const { connection, lastDisconnect } = update
         if(connection === 'close' && lastDisconnect) {
@@ -50,8 +53,8 @@ async function connectToWhatsApp () {
     })
 
     WAEvents.on('messages.upsert', async ({ messages: messageList, type }) => {
-        console.log("type", type)
-        console.log(JSON.stringify(messageList, null, 4))
+        // console.log("type", type)
+        // console.log(JSON.stringify(messageList, null, 4))
 
         for (const messageNotification of messageList) {
             if (messageNotification.key.fromMe) {
@@ -74,12 +77,12 @@ async function processUserMessage(message: proto.IWebMessageInfo, socket: WASock
         const { conversation: textMessage, extendedTextMessage } = whatsappMessageInfo
 
         if(textMessage){
-            console.log('função de texto simples')
+            //console.log('função de texto simples')
             await processPlainTextMessage(message, socket)
         }
 
         if(extendedTextMessage){
-            console.log('função pra mensagem rica')
+            //console.log('função pra mensagem rica')
             await processExtendedTextMessage(message, socket)
         }   
     } 
